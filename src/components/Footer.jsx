@@ -11,6 +11,7 @@ const Footer = () => {
       <p>Made by <a href={footerContent.instagramLink} target="_blank" rel="noopener noreferrer" style={linkStyle}>
         @eyadthegh
       </a></p>
+      <p> this project is made for extra credits in network and information security course/Ali Maqousi </p>
       
     </footer>
   );
