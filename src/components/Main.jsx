@@ -55,7 +55,7 @@ const Main = () => {
 
         {/* Advanced Ciphering Techniques Section */}
         <section className="cipher-section">
-          <h2>Advanced Ciphering Techniques</h2>
+          <h2>Product / Advanced Cipering</h2>
           <div className="cipher-row">
             {cipherData.advanced.map((cipher, index) => (
               <div key={index} className="cipher-item">

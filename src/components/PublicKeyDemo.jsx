@@ -1,30 +1,31 @@
 import React, { useState } from "react";
 
 // Modular Exponentiation
+//could be done with result == (m**e)%n but its not memory effecent 
 const modExp = (base, exp, mod) => {
   let result = 1;
-  base = base % mod; // Apply modulus to base to avoid large numbers
+  base = base % mod; 
   while (exp > 0) {
     if (exp % 2 === 1) {
-      result = (result * base) % mod; // Multiply result by base if exponent is odd
+      result = (result * base) % mod; 
     }
-    exp = Math.floor(exp / 2); // Divide exponent by 2 for next iteration
-    base = (base * base) % mod; // Square the base and apply modulus
+    exp = Math.floor(exp / 2); 
+    base = (base * base) % mod; 
   }
   return result;
 };
 
-// Key Generation Function
-const generateKeys = () => {
-  const p = 17; // Prime number p
-  const q = 11; // Prime number q
-  const n = p * q; // n = p * q
-  const phi = (p - 1) * (q - 1); // Euler's totient function φ(n)
 
-  const e = 7; // Public exponent e (needs to be coprime with φ(n))
+const generateKeys = () => {
+  const p = 17;
+  const q = 11;
+  const n = p * q; 
+  const phi = (p - 1) * (q - 1); 
+
+  const e = 7;
   let d = 1;
   while ((d * e) % phi !== 1) {
-    d++; // Brute force to find d (private exponent) such that (d * e) % φ(n) = 1
+    d++;
   }
 
   return { publicKey: { e, n }, privateKey: { d, n } };
@@ -34,17 +35,17 @@ const PublicKeyDemo = () => {
   const [message, setMessage] = useState(""); // Holds the original message
   const [encryptedMessage, setEncryptedMessage] = useState(""); // Holds the encrypted message
   const [decryptedMessage, setDecryptedMessage] = useState(""); // Holds the decrypted message
-  const [keys, setKeys] = useState(generateKeys()); // Generated keys
+  const [keys, setKeys] = useState(generateKeys()); 
 
-  // Encrypt the message using the public key
+  
   const handleEncrypt = () => {
     const { e, n } = keys.publicKey;
-    const messageChars = message.split("").map((char) => char.charCodeAt(0)); // Convert message to ASCII codes
-    const encryptedChars = messageChars.map((char) => modExp(char, e, n)); // Encrypt each character
-    setEncryptedMessage(encryptedChars.join(" ")); // Join encrypted characters into a string
+    const messageChars = message.split("").map((char) => char.charCodeAt(0)); 
+    const encryptedChars = messageChars.map((char) => modExp(char, e, n)); 
+    setEncryptedMessage( encryptedChars.map((char) => String.fromCharCode(char)).join("")); 
   };
 
-  // Decrypt the message using the private key
+ 
   const handleDecrypt = () => {
     const { d, n } = keys.privateKey;
     const encryptedChars = encryptedMessage.split(" ").map(Number); // Convert encrypted message back to numbers
@@ -101,7 +102,7 @@ const PublicKeyDemo = () => {
           <p>
             The message was encrypted using the public key with the formula: <strong>C = M<sup>e</sup> mod N</strong>.
             <br />
-            Where C is the ciphertext, M is the plaintext message, e is the public exponent, and N is the product of two prime numbers.
+            Where C is the ciphertext, M is the plaintext message, e is the public exponent, and N is the product of two prime numbers after turning the characters to their ascii code of course.
           </p>
         </div>
       )}

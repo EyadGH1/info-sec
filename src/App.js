@@ -11,6 +11,7 @@ import CircularShiftDemo from './components/CircularShiftDemo.jsx';
 import PBoxDemo from './components/PBoxDemo.jsx';
 import Shuffle from './components/Shuffle.jsx';
 import XOR from './components/XORDemo.jsx';
+import DESDemo from "./components/DESDemo.jsx"
 function App() {
   return (
     <Router>
@@ -27,6 +28,7 @@ function App() {
         <Route path="/pbox" element={<PBoxDemo />} />
         <Route path="/shuffle" element={<Shuffle />} />
         <Route path="/xor" element={<XOR />} />
+        <Route path="/DES" element={<DESDemo />} />
       </Routes>
     </Router>
   );

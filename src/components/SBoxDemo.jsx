@@ -9,25 +9,23 @@ const applySBox = (input, sBox) => {
 };
 
 const SBoxDemo = () => {
-  const [message, setMessage] = useState(""); // Holds the original message
-  const [encryptedMessage, setEncryptedMessage] = useState(""); // Holds the encrypted message
-  const [decryptedMessage, setDecryptedMessage] = useState(""); // Holds the decrypted message
-  const [sBox, setSBox] = useState({ a: "b", b: "c", c: "d", d: "a" }); // Default S-box
-  const [inverseSBox, setInverseSBox] = useState({ b: "a", c: "b", d: "c", a: "d" }); // Default inverse S-box
+  const [message, setMessage] = useState(""); 
+  const [encryptedMessage, setEncryptedMessage] = useState(""); 
+  const [decryptedMessage, setDecryptedMessage] = useState(""); 
+  const [sBox, setSBox] = useState({ a: "b", b: "c", c: "d", d: "a" }); 
+  const [inverseSBox, setInverseSBox] = useState({ b: "a", c: "b", d: "c", a: "d" }); 
 
-  // Handle encryption
   const handleEncrypt = () => {
     const encrypted = applySBox(message, sBox);
     setEncryptedMessage(encrypted);
   };
 
-  // Handle decryption
+
   const handleDecrypt = () => {
     const decrypted = applySBox(encryptedMessage, inverseSBox);
     setDecryptedMessage(decrypted);
   };
 
-  // Handle S-Box input
   const handleSBoxInput = (e) => {
     try {
       const newSBox = JSON.parse(e.target.value);

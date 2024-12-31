@@ -1,35 +1,34 @@
 import React, { useState } from "react" 
 import Swap from "../assets/Swap.jpg"
-// Swap Encryption/Decryption Functions
+
 const swapCharacters = (message, swapPositions) => {
-  let messageArray = message.split("")  // Convert the message into an array of characters
+  let messageArray = message.split("")  
   swapPositions.forEach(([i, j]) => {
-    [messageArray[i], messageArray[j]] = [messageArray[j], messageArray[i]]  // Swap characters
+    [messageArray[i], messageArray[j]] = [messageArray[j], messageArray[i]]  
   }) 
-  return messageArray.join("")  // Join the array back into a string
+  return messageArray.join("")  
 } 
 
 const SwapDemo = () => {
   const [message, setMessage] = useState("") 
   const [encryptedMessage, setEncryptedMessage] = useState("") 
   const [decryptedMessage, setDecryptedMessage] = useState("") 
-  const [swapPositions, setSwapPositions] = useState("0,3 1,2")  // Default swap pairs for characters
-
+  const [swapPositions, setSwapPositions] = useState("0,3 1,2")  
   const parseSwapPositions = () => {
     return swapPositions
       .split(" ")
       .map(pair => pair.split(",").map(Number)) 
   } 
 
-  const handleEncrypt = () => {
+  async function handleEncrypt () {
     const swaps = parseSwapPositions() 
-    const encrypted = swapCharacters(message, swaps)  // Encrypt the message by swapping characters
+    const encrypted = swapCharacters(message, swaps)  
     setEncryptedMessage(encrypted) 
   } 
 
   const handleDecrypt = () => {
     const swaps = parseSwapPositions() 
-    const decrypted = swapCharacters(encryptedMessage, swaps)  // Decrypt by swapping the same characters again
+    const decrypted = swapCharacters(encryptedMessage, swaps) 
     setDecryptedMessage(decrypted) 
   } 
 

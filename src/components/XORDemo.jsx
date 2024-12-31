@@ -1,6 +1,6 @@
 import React, { useState } from "react" 
 
-// XOR Encryption/Decryption Functions
+
 const xorEncryptDecrypt = (input, key) => {
   return input
     .split("")
@@ -12,7 +12,7 @@ const XORDemo = () => {
   const [message, setMessage] = useState("") 
   const [encryptedMessage, setEncryptedMessage] = useState("") 
   const [decryptedMessage, setDecryptedMessage] = useState("") 
-  const [key, setKey] = useState(0)  // Default key
+  const [key, setKey] = useState()  // Default key
 
   const handleEncrypt = () => {
     const encrypted = xorEncryptDecrypt(message, key) 
@@ -32,7 +32,8 @@ const XORDemo = () => {
         logical operation. It applies a key to the input data to produce the
         encrypted output, and the same key is used to decrypt it.
       </p>
-
+      Data Encryption Standard (DES) is a symmetric encryption algorithm that
+      uses a 64-bit block size and a 64-bit key but uses 8 bits for parity checking.
       <label>
         Enter XOR Key (integer):
         <input
