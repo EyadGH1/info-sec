@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import fenceImage from "../assets/fence.png";
 
 const RailFence = () => {
-  const [text, setText] = useState(""); // Holds the original message
+  const [textToEncrypt, setTextToEncrypt] = useState(""); // Holds the original message for encryption
+  const [textToDecrypt, setTextToDecrypt] = useState(""); // Holds the message to be decrypted
   const [rows, setRows] = useState(3); // Holds the number of rows
   const [encryptedText, setEncryptedText] = useState(""); // Holds the encrypted message
   const [decryptedText, setDecryptedText] = useState(""); // Holds the decrypted message
@@ -17,7 +18,7 @@ const RailFence = () => {
     const mat = Array.from({ length: rows }, () => []);
     let j = 0;
     let direction = 1; // 1 for down, -1 for up
-    const cleanedText = text.replace(/\s+/g, ""); // Remove spaces
+    const cleanedText = textToEncrypt.replace(/\s+/g, ""); // Remove spaces
     const textArr = cleanedText.split("");
 
     textArr.forEach((char) => {
@@ -39,7 +40,7 @@ const RailFence = () => {
       return;
     }
 
-    const cleanedText = text.replace(/\s+/g, ""); // Remove spaces
+    const cleanedText = textToDecrypt.replace(/\s+/g, ""); // Remove spaces
     const len = cleanedText.length;
     const mat = Array.from({ length: rows }, () => Array(len).fill(null));
     let j = 0;
@@ -91,51 +92,69 @@ const RailFence = () => {
       <img className="fence-image" src={fenceImage} alt="Rail Fence" />
       <br />
       <h3 className="try-text">Try it yourself:</h3>
-      <textarea
-        className="message-input"
-        rows="4"
-        cols="50"
-        placeholder="Enter your message here..."
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-      />
-      <br />
-      <label htmlFor="rows">Number of Rows:</label>
-      <input
-        type="number"
-        id="rows"
-        className="rows-input"
-        value={rows}
-        min="2"
-        onChange={(e) => setRows(Number(e.target.value))}
-      />
-      <br />
-      <button
-        className="action-button"
-        onClick={handleEncrypt}
-        disabled={!text || rows < 2}
-      >
-        Encrypt
-      </button>
-      <button
-        className="action-button"
-        onClick={handleDecrypt}
-        disabled={!text || rows < 2}
-      >
-        Decrypt
-      </button>
 
-      <br />
+      <div>
+        <label htmlFor="rows">Number of Rows:</label>
+        <input
+          type="number"
+          id="rows"
+          className="rows-input"
+          value={rows}
+          min="2"
+          onChange={(e) => setRows(Number(e.target.value))}
+        />
+      </div>
+
+      <div>
+        <h4>Encrypt a Message:</h4>
+        <textarea
+          className="message-input"
+          rows="4"
+          cols="50"
+          placeholder="Enter your message to encrypt here..."
+          value={textToEncrypt}
+          onChange={(e) => setTextToEncrypt(e.target.value)}
+        />
+        <br />
+        <button
+          className="action-button"
+          onClick={handleEncrypt}
+          disabled={!textToEncrypt || rows < 2}
+        >
+          Encrypt
+        </button>
+      </div>
+
       {encryptedText && (
         <div className="encrypted-text">
-          <h2>Encrypted Text:</h2>
+          <h4>Encrypted Text:</h4>
           <p>{encryptedText}</p>
         </div>
       )}
 
+      <div>
+        <h4>Decrypt a Message:</h4>
+        <textarea
+          className="message-input"
+          rows="4"
+          cols="50"
+          placeholder="Enter your message to decrypt here..."
+          value={textToDecrypt}
+          onChange={(e) => setTextToDecrypt(e.target.value)}
+        />
+        <br />
+        <button
+          className="action-button"
+          onClick={handleDecrypt}
+          disabled={!textToDecrypt || rows < 2}
+        >
+          Decrypt
+        </button>
+      </div>
+
       {decryptedText && (
         <div className="decrypted-text">
-          <h2>Decrypted Text:</h2>
+          <h4>Decrypted Text:</h4>
           <p>{decryptedText}</p>
         </div>
       )}

@@ -17,6 +17,7 @@ const CircularBitShiftDemo = () => {
   const [decryptedMessage, setDecryptedMessage] = useState("");
   const [shift, setShift] = useState(1);  // Default shift
   const [direction, setDirection] = useState("right");  // Default direction
+  const [cipheredText, setCipheredText] = useState("");  // New state for ciphered text input
 
   const handleEncrypt = () => {
     const encrypted = message
@@ -31,7 +32,7 @@ const CircularBitShiftDemo = () => {
 
   const handleDecrypt = () => {
     const oppositeDirection = direction === "right" ? "left" : "right";
-    const decrypted = encryptedMessage
+    const decrypted = cipheredText
       .split("")
       .map((char) => {
         const charCode = char.charCodeAt(0);
@@ -99,9 +100,22 @@ const CircularBitShiftDemo = () => {
           </div>
         )}
 
-        <button className="decrypt-btn" onClick={handleDecrypt} disabled={!encryptedMessage}>
+        <button className="decrypt-btn" onClick={handleDecrypt} disabled={!cipheredText}>
           Decrypt
         </button>
+
+        {/* New input field for ciphered text (encrypted message) */}
+        <div className="input-group">
+          <label>
+            Enter Ciphered Text for Decryption:
+            <input
+              type="text"
+              value={cipheredText}
+              onChange={(e) => setCipheredText(e.target.value)}
+              placeholder="Enter encrypted message"
+            />
+          </label>
+        </div>
 
         {decryptedMessage && (
           <div className="decrypted-message">

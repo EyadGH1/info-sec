@@ -10,7 +10,8 @@ const applyPBox = (input, permutation) => {
 };
 
 const PBoxDemo = () => {
-  const [message, setMessage] = useState(""); // Holds the original message
+  const [message, setMessage] = useState(""); // Holds the original message for encryption
+  const [textToDecrypt, setTextToDecrypt] = useState(""); // Holds the message to be decrypted
   const [encryptedMessage, setEncryptedMessage] = useState(""); // Holds the encrypted message
   const [decryptedMessage, setDecryptedMessage] = useState(""); // Holds the decrypted message
   const [pattern, setPattern] = useState("3,0,2,1"); // Default permutation pattern
@@ -30,7 +31,11 @@ const PBoxDemo = () => {
   const handleDecrypt = () => {
     const permutation = pattern.split(",").map(Number);
     const inversePermutation = permutation.map((_, i) => permutation.indexOf(i)); // Calculate the inverse permutation
-    const decrypted = applyPBox(encryptedMessage, inversePermutation); // Apply inverse P-Box encryption
+    if (textToDecrypt.length !== permutation.length) {
+      alert(`Message length must be exactly ${permutation.length} characters.`); // Check if the message length matches pattern length
+      return;
+    }
+    const decrypted = applyPBox(textToDecrypt, inversePermutation); // Apply inverse P-Box encryption
     setDecryptedMessage(decrypted); // Set the decrypted message
   };
 
@@ -55,13 +60,24 @@ const PBoxDemo = () => {
       </div>
 
       <div className="input-group">
-        <label>Enter Your Message:</label>
+        <label>Enter Your Message to Encrypt:</label>
         <textarea
           rows="4"
           cols="50"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Enter your message here..."
+        />
+      </div>
+
+      <div className="input-group">
+        <label>Enter Your Message to Decrypt:</label>
+        <textarea
+          rows="4"
+          cols="50"
+          value={textToDecrypt}
+          onChange={(e) => setTextToDecrypt(e.target.value)}
+          placeholder="Enter your encrypted message here..."
         />
       </div>
 
@@ -81,7 +97,7 @@ const PBoxDemo = () => {
           </div>
         )}
 
-        <button onClick={handleDecrypt} disabled={!encryptedMessage || !pattern}>
+        <button onClick={handleDecrypt} disabled={!textToDecrypt || !pattern}>
           Decrypt
         </button>
 

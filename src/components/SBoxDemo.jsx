@@ -9,23 +9,33 @@ const applySBox = (input, sBox) => {
 };
 
 const SBoxDemo = () => {
-  const [message, setMessage] = useState(""); 
-  const [encryptedMessage, setEncryptedMessage] = useState(""); 
-  const [decryptedMessage, setDecryptedMessage] = useState(""); 
-  const [sBox, setSBox] = useState({ a: "b", b: "c", c: "d", d: "a" }); 
-  const [inverseSBox, setInverseSBox] = useState({ b: "a", c: "b", d: "c", a: "d" }); 
+  const [message, setMessage] = useState(""); // Holds the original message for encryption
+  const [textToDecrypt, setTextToDecrypt] = useState(""); // Holds the message to decrypt directly
+  const [encryptedMessage, setEncryptedMessage] = useState(""); // Holds the encrypted message
+  const [decryptedMessage, setDecryptedMessage] = useState(""); // Holds the decrypted message
+  const [directDecryptedMessage, setDirectDecryptedMessage] = useState(""); // Holds the directly decrypted message
+  const [sBox, setSBox] = useState({ a: "b", b: "c", c: "d", d: "a" }); // S-box for encryption
+  const [inverseSBox, setInverseSBox] = useState({ b: "a", c: "b", d: "c", a: "d" }); // Inverse S-box for decryption
 
+  // Encrypt the message
   const handleEncrypt = () => {
     const encrypted = applySBox(message, sBox);
     setEncryptedMessage(encrypted);
   };
 
-
+  // Decrypt the encrypted message
   const handleDecrypt = () => {
     const decrypted = applySBox(encryptedMessage, inverseSBox);
     setDecryptedMessage(decrypted);
   };
 
+  // Decrypt a directly entered message
+  const handleDirectDecrypt = () => {
+    const decrypted = applySBox(textToDecrypt, inverseSBox);
+    setDirectDecryptedMessage(decrypted);
+  };
+
+  // Handle input for S-box
   const handleSBoxInput = (e) => {
     try {
       const newSBox = JSON.parse(e.target.value);
@@ -65,7 +75,7 @@ const SBoxDemo = () => {
         className="message-input"
         rows="4"
         cols="50"
-        placeholder="Enter your message here..."
+        placeholder="Enter your message to encrypt..."
         value={message}
         onChange={(e) => setMessage(e.target.value)}
       />
@@ -79,25 +89,39 @@ const SBoxDemo = () => {
         <div className="result-box">
           <h4>Encrypted Message:</h4>
           <p>{encryptedMessage}</p>
-          <p>
-            This is the result of applying the S-box transformation. Each character in
-            the input was replaced based on the S-box mapping.
-          </p>
         </div>
       )}
 
       <button className="action-button" onClick={handleDecrypt} disabled={!encryptedMessage || !inverseSBox}>
-        Decrypt
+        Decrypt Encrypted Message
       </button>
 
       {decryptedMessage && (
         <div className="result-box">
           <h4>Decrypted Message:</h4>
           <p>{decryptedMessage}</p>
-          <p>
-            The decryption was performed using the inverse S-box, reversing the
-            transformations to recover the original message.
-          </p>
+        </div>
+      )}
+
+      <h3 className="try-text">Decrypt a Custom Message</h3>
+      <textarea
+        className="message-input"
+        rows="4"
+        cols="50"
+        placeholder="Enter your encrypted message here..."
+        value={textToDecrypt}
+        onChange={(e) => setTextToDecrypt(e.target.value)}
+      />
+      <br />
+
+      <button className="action-button" onClick={handleDirectDecrypt} disabled={!textToDecrypt || !inverseSBox}>
+        Decrypt Custom Message
+      </button>
+
+      {directDecryptedMessage && (
+        <div className="result-box">
+          <h4>Directly Decrypted Message:</h4>
+          <p>{directDecryptedMessage}</p>
         </div>
       )}
     </div>

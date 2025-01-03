@@ -6,6 +6,7 @@ const SplitAndCombineDemo = () => {
   const [encryptedMessage, setEncryptedMessage] = useState("");
   const [decryptedMessage, setDecryptedMessage] = useState("");
   const [splitIndex, setSplitIndex] = useState(4);
+  const [cipheredText, setCipheredText] = useState("");  // New state for ciphered text input
 
   // Helper Functions
   const splitAndCombine = (charCode, splitIndex) => {
@@ -34,7 +35,7 @@ const SplitAndCombineDemo = () => {
   };
 
   const handleDecrypt = () => {
-    const decrypted = encryptedMessage
+    const decrypted = cipheredText
       .split("")
       .map((char) => {
         const charCode = char.charCodeAt(0);
@@ -97,10 +98,24 @@ const SplitAndCombineDemo = () => {
         <img src={splitImage} alt="Split Illustration" className="split-image" />
       </div>
 
+      {/* New input field for ciphered text (encrypted message) */}
+      <div className="input-group">
+        <label>
+          Enter Ciphered Text for Decryption:
+          <input
+            type="text"
+            value={cipheredText}
+            onChange={(e) => setCipheredText(e.target.value)}
+            placeholder="Enter encrypted message"
+            className="split-input"
+          />
+        </label>
+      </div>
+
       <br />
       <button
         onClick={handleDecrypt}
-        disabled={!encryptedMessage}
+        disabled={!cipheredText}
         className="split-button"
       >
         Decrypt

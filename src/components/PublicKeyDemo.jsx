@@ -1,28 +1,32 @@
 import React, { useState } from "react";
 
 // Modular Exponentiation
-//could be done with result == (m**e)%n but its not memory effecent 
 const modExp = (base, exp, mod) => {
   let result = 1;
-  base = base % mod; 
+  base = base % mod;
   while (exp > 0) {
     if (exp % 2 === 1) {
-      result = (result * base) % mod; 
+      result = (result * base) % mod;
     }
-    exp = Math.floor(exp / 2); 
-    base = (base * base) % mod; 
+    exp = Math.floor(exp / 2);
+    base = (base * base) % mod;
   }
   return result;
 };
 
+// Function to generate keys based on user input for p and q
+const generateKeys = (p, q) => {
+  const n = p * q;
+  const phi = (p - 1) * (q - 1);
 
-const generateKeys = () => {
-  const p = 17;
-  const q = 11;
-  const n = p * q; 
-  const phi = (p - 1) * (q - 1); 
+  // Choose e such that it is coprime with phi
+  let e = 2;
+  while (e < phi) {
+    if (gcd(e, phi) === 1) break;
+    e++;
+  }
 
-  const e = 7;
+  // Compute d such that (d * e) % phi === 1
   let d = 1;
   while ((d * e) % phi !== 1) {
     d++;
@@ -31,28 +35,42 @@ const generateKeys = () => {
   return { publicKey: { e, n }, privateKey: { d, n } };
 };
 
+// Function to compute gcd (Greatest Common Divisor)
+const gcd = (a, b) => {
+  if (b === 0) return a;
+  return gcd(b, a % b);
+};
+
 const PublicKeyDemo = () => {
   const [message, setMessage] = useState(""); // Holds the original message
   const [encryptedMessage, setEncryptedMessage] = useState(""); // Holds the encrypted message
   const [decryptedMessage, setDecryptedMessage] = useState(""); // Holds the decrypted message
-  const [keys, setKeys] = useState(generateKeys()); 
+  const [p, setP] = useState(17); // User input for prime p
+  const [q, setQ] = useState(11); // User input for prime q
+  const [keys, setKeys] = useState(generateKeys(p, q)); // Initial keys based on default primes
 
-  
+  // Encrypt the message using the public key
   const handleEncrypt = () => {
     const { e, n } = keys.publicKey;
-    const messageChars = message.split("").map((char) => char.charCodeAt(0)); 
-    const encryptedChars = messageChars.map((char) => modExp(char, e, n)); 
-    setEncryptedMessage( encryptedChars.map((char) => String.fromCharCode(char)).join("")); 
+    const messageChars = message.split("").map((char) => char.charCodeAt(0));
+    const encryptedChars = messageChars.map((char) => modExp(char, e, n));
+    setEncryptedMessage(encryptedChars.map((char) => String.fromCharCode(char)).join(""));
   };
 
- 
+  // Decrypt the message using the private key
   const handleDecrypt = () => {
     const { d, n } = keys.privateKey;
-    const encryptedChars = encryptedMessage.split(" ").map(Number); // Convert encrypted message back to numbers
+    const encryptedChars = encryptedMessage.split("").map((char) => char.charCodeAt(0)); // Convert encrypted message back to numbers
     const decryptedChars = encryptedChars.map((char) => modExp(char, d, n)); // Decrypt each character
-    setDecryptedMessage(
-      decryptedChars.map((char) => String.fromCharCode(char)).join("") // Convert back to characters
-    );
+    setDecryptedMessage(decryptedChars.map((char) => String.fromCharCode(char)).join("")); // Convert back to characters
+  };
+
+  // Handle the generation of new keys based on new primes
+  const handleGenerateKeys = () => {
+    const newKeys = generateKeys(p, q);
+    setKeys(newKeys);
+    setEncryptedMessage(""); // Reset encrypted message when keys are changed
+    setDecryptedMessage(""); // Reset decrypted message when keys are changed
   };
 
   return (
@@ -82,6 +100,27 @@ const PublicKeyDemo = () => {
         </ul>
       </div>
 
+      {/* Input fields for primes p and q */}
+      <div className="prime-inputs">
+        <label>
+          Prime p:
+          <input
+            type="number"
+            value={p}
+            onChange={(e) => setP(Number(e.target.value))}
+          />
+        </label>
+        <label>
+          Prime q:
+          <input
+            type="number"
+            value={q}
+            onChange={(e) => setQ(Number(e.target.value))}
+          />
+        </label>
+        <button onClick={handleGenerateKeys}>Generate Keys</button>
+      </div>
+
       <textarea
         className="message-input"
         rows="4"
@@ -99,11 +138,6 @@ const PublicKeyDemo = () => {
         <div className="result">
           <h4>Encrypted Message</h4>
           <p>{encryptedMessage}</p>
-          <p>
-            The message was encrypted using the public key with the formula: <strong>C = M<sup>e</sup> mod N</strong>.
-            <br />
-            Where C is the ciphertext, M is the plaintext message, e is the public exponent, and N is the product of two prime numbers after turning the characters to their ascii code of course.
-          </p>
         </div>
       )}
 
@@ -115,11 +149,6 @@ const PublicKeyDemo = () => {
       {decryptedMessage && (
         <div className="result">
           <h4>Decrypted Message</h4>
-          <p>
-            The message was decrypted using the private key with the formula: <strong>M = C<sup>d</sup> mod N</strong>.
-            <br />
-            Where M is the original plaintext message, C is the ciphertext, d is the private exponent, and N is the product of two prime numbers.
-          </p>
           <p>{decryptedMessage}</p>
         </div>
       )}
