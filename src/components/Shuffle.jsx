@@ -5,7 +5,8 @@ const Shuffle = () => {
   const [decryptedText, setDecryptedText] = useState(""); // Holds the decrypted text
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""); // Alphabet for mapping
   const keyRef = useRef(null); // Reference for the key input
-  const textRef = useRef(null); // Reference for the text input (can be plain or ciphered)
+  const textRef = useRef(null); // Reference for the text input (plain text for encryption)
+  const cipheredInputRef = useRef(null); // Reference for the ciphered text input (for decryption)
 
   const createMapping = (key) => {
     const dict = {};
@@ -46,7 +47,7 @@ const Shuffle = () => {
   const decrypt = (e) => {
     e.preventDefault();
     const key = keyRef.current.value.toUpperCase();
-    const ciphered = textRef.current.value.toUpperCase();
+    const ciphered = cipheredInputRef.current.value.toUpperCase();
 
     if (key.length !== 26 || new Set(key).size !== 26) {
       alert("The key must be exactly 26 unique characters.");
@@ -54,7 +55,6 @@ const Shuffle = () => {
     }
 
     const reverseDict = createReverseMapping(key);
-    console.log(reverseDict)
     const decrypted = ciphered
       .split("")
       .map((char) => reverseDict[char] || char)
@@ -88,14 +88,14 @@ const Shuffle = () => {
 
         <div className="form-group">
           <label htmlFor="text" className="form-label">
-            Enter text to cipher or decipher:
+            Enter plain text to encrypt:
           </label>
           <input
             type="text"
             id="text"
             ref={textRef}
             className="input-field"
-            placeholder="e.g., HELLO or Ciphered Text"
+            placeholder="e.g., HELLO"
           />
         </div>
 
@@ -103,9 +103,6 @@ const Shuffle = () => {
           <button type="button" onClick={encrypt} className="action-button">
             Encrypt
           </button>
-          {/* <button type="button" onClick={decrypt} className="action-button">
-            Decrypt
-          </button> */}
         </div>
       </form>
 
@@ -115,6 +112,27 @@ const Shuffle = () => {
           <p>{cipheredText}</p>
         </div>
       )}
+
+      <form className="shuffle-form">
+        <div className="form-group">
+          <label htmlFor="ciphered-text" className="form-label">
+            Enter ciphered text to decrypt:
+          </label>
+          <input
+            type="text"
+            id="ciphered-text"
+            ref={cipheredInputRef}
+            className="input-field"
+            placeholder="e.g., Encrypted Text"
+          />
+        </div>
+
+        <div className="button-group">
+          <button type="button" onClick={decrypt} className="action-button">
+            Decrypt
+          </button>
+        </div>
+      </form>
 
       {decryptedText && (
         <div className="result-box">

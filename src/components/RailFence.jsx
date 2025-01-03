@@ -3,41 +3,90 @@ import fenceImage from "../assets/fence.png";
 
 const RailFence = () => {
   const [text, setText] = useState(""); // Holds the original message
+  const [rows, setRows] = useState(3); // Holds the number of rows
   const [encryptedText, setEncryptedText] = useState(""); // Holds the encrypted message
   const [decryptedText, setDecryptedText] = useState(""); // Holds the decrypted message
 
   // Encrypt the message using the Rail Fence Cipher
   const handleEncrypt = () => {
-    const rows = 3;
+    if (rows < 2) {
+      alert("Number of rows must be at least 2.");
+      return;
+    }
+
     const mat = Array.from({ length: rows }, () => []);
     let j = 0;
-    let last = "top";
-    const res = text.replace(/\s+/g, "");
-    const textArr = res.split("");
+    let direction = 1; // 1 for down, -1 for up
+    const cleanedText = text.replace(/\s+/g, ""); // Remove spaces
+    const textArr = cleanedText.split("");
 
-    for (let i = 0; i < textArr.length; i++) {
-      mat[j][i] = textArr[i];
-      if (last === "top") {
-        j++;
-      } else if (last === "buttom") {
-        j--;
+    textArr.forEach((char) => {
+      mat[j].push(char);
+      j += direction;
+
+      if (j === 0 || j === rows - 1) {
+        direction *= -1; // Change direction at the top or bottom row
       }
-      if (j === 0) {
-        last = "top";
-      } else if (j >= 2) {
-        last = "buttom";
+    });
+
+    setEncryptedText(mat.map((row) => row.join("")).join(""));
+  };
+
+  // Decrypt the message using the Rail Fence Cipher
+  const handleDecrypt = () => {
+    if (rows < 2) {
+      alert("Number of rows must be at least 2.");
+      return;
+    }
+
+    const cleanedText = text.replace(/\s+/g, ""); // Remove spaces
+    const len = cleanedText.length;
+    const mat = Array.from({ length: rows }, () => Array(len).fill(null));
+    let j = 0;
+    let direction = 1;
+
+    // Mark the positions in the zigzag pattern
+    for (let i = 0; i < len; i++) {
+      mat[j][i] = "*";
+      j += direction;
+
+      if (j === 0 || j === rows - 1) {
+        direction *= -1;
       }
     }
 
-    setEncryptedText(mat.map((row) => row.join("")).join(""));
+    // Fill the marked positions with characters from the text
+    let charIndex = 0;
+    for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < len; col++) {
+        if (mat[row][col] === "*") {
+          mat[row][col] = cleanedText[charIndex++];
+        }
+      }
+    }
+
+    // Read the text in a zigzag pattern
+    j = 0;
+    direction = 1;
+    let decrypted = "";
+    for (let i = 0; i < len; i++) {
+      decrypted += mat[j][i];
+      j += direction;
+
+      if (j === 0 || j === rows - 1) {
+        direction *= -1;
+      }
+    }
+
+    setDecryptedText(decrypted);
   };
 
   return (
     <div className="rail-fence-container">
       <h2 className="header-title">Rail Fence Cipher</h2>
       <p className="intro-text">
-        Rail Fence works by distributing the message on 3 different rows, then
-        reordering it starting from the top row to the 3rd.
+        The Rail Fence Cipher works by arranging the message in a zigzag
+        pattern across a specified number of rows, then reading it row by row.
       </p>
       <img className="fence-image" src={fenceImage} alt="Rail Fence" />
       <br />
@@ -51,12 +100,29 @@ const RailFence = () => {
         onChange={(e) => setText(e.target.value)}
       />
       <br />
+      <label htmlFor="rows">Number of Rows:</label>
+      <input
+        type="number"
+        id="rows"
+        className="rows-input"
+        value={rows}
+        min="2"
+        onChange={(e) => setRows(Number(e.target.value))}
+      />
+      <br />
       <button
         className="action-button"
         onClick={handleEncrypt}
-        disabled={!text}
+        disabled={!text || rows < 2}
       >
         Encrypt
+      </button>
+      <button
+        className="action-button"
+        onClick={handleDecrypt}
+        disabled={!text || rows < 2}
+      >
+        Decrypt
       </button>
 
       <br />

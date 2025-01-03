@@ -3,6 +3,7 @@ import React, { useRef, useState, useEffect } from 'react';
 const Vigenere = () => {
   const plain = useRef(null);
   const key = useRef(null);
+  const customCipheredInput = useRef(null); // New ref for custom encrypted input
   const [cipheredText, setCipheredText] = useState("");
   const [decryptedText, setDecryptedText] = useState("");
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
@@ -56,7 +57,7 @@ const Vigenere = () => {
 
   const decrypt = (e) => {
     e.preventDefault();
-    let cipherText = cipheredText.toUpperCase().replace(/\s+/g, "");
+    const cipherText = customCipheredInput.current.value.toUpperCase().replace(/\s+/g, ""); // Use input value
     let keyText = key.current.value.toUpperCase();
     
     if (cipherText.length > keyText.length) {
@@ -68,7 +69,7 @@ const Vigenere = () => {
 
     for (let i = 0; i < cipherText.length; i++) {
       let rowIn = findIndexInAlpha(keyText[i]);
-      let colIn = table[rowIn].indexOf(cipherText[i]);
+      let colIn = table[rowIn]?.indexOf(cipherText[i]);
       if (rowIn !== undefined && colIn !== undefined) {
         decrypted += alphabet[colIn];
       }
@@ -108,9 +109,12 @@ const Vigenere = () => {
 
         <h2>Encrypted Text: {cipheredText}</h2>
 
-        <button className="ceaser-input-button" onClick={decrypt}>
-          Decrypt
-        </button>
+        <h3>Decrypt a Ciphered Text</h3>
+        <form onSubmit={decrypt}>
+          <label htmlFor="ciphered-input">Enter Ciphered Text:</label>
+          <input type="text" className='ciphered-input' ref={customCipheredInput} />
+          <button className="ceaser-input-button" type="submit">Decrypt</button>
+        </form>
 
         {decryptedText && (
           <>

@@ -1,35 +1,48 @@
 import React, { useState } from "react" 
 import Swap from "../assets/Swap.jpg"
 
-const swapCharacters = (message, swapPositions) => {
+const swapCharacters = (message, swapPosition) => {
   let messageArray = message.split("")  
-  swapPositions.forEach(([i, j]) => {
-    [messageArray[i], messageArray[j]] = [messageArray[j], messageArray[i]]  
-  }) 
-  return messageArray.join("")  
+  let newMessagearray = [] 
+  for (let i  = messageArray.length ; i >swapPosition; i--) {
+    newMessagearray.push(messageArray[i])
+  }
+  for (let i = 0; i <= swapPosition; i++) {
+    newMessagearray.push(messageArray[i])
+  }
+  return newMessagearray.join("") 
 } 
+const unswapCharacters = (encryptedMessage,swapPosition) =>{
+  encryptedMessage = String(encryptedMessage)
+    let encryptedArray = encryptedMessage.split("");
+    console.log(encryptedArray)
+    let part1 = []
+    let part2 = []
+    for(let i = swapPosition + 1;  i < encryptedArray.length;i++){
+      part1.push(encryptedArray[i])
+    }
+    for(let i = swapPosition ; i >=0 ; i--){
+      part2.push(encryptedArray[i])
+    }
+    return part1.join("") + part2.join("");
+}
 
 const SwapDemo = () => {
   const [message, setMessage] = useState("") 
   const [encryptedMessage, setEncryptedMessage] = useState("") 
   const [decryptedMessage, setDecryptedMessage] = useState("") 
-  const [swapPositions, setSwapPositions] = useState("0,3 1,2")  
-  const parseSwapPositions = () => {
-    return swapPositions
-      .split(" ")
-      .map(pair => pair.split(",").map(Number)) 
-  } 
+  const [swapPositions, setSwapPositions] = useState(0)  
+ 
 
   async function handleEncrypt () {
-    const swaps = parseSwapPositions() 
-    const encrypted = swapCharacters(message, swaps)  
+    const encrypted = swapCharacters(message, swapPositions)  
     setEncryptedMessage(encrypted) 
   } 
 
   const handleDecrypt = () => {
-    const swaps = parseSwapPositions() 
-    const decrypted = swapCharacters(encryptedMessage, swaps) 
-    setDecryptedMessage(decrypted) 
+    
+    setDecryptedMessage(unswapCharacters(encryptedMessage,swapPositions))
+    console.log(decryptedMessage)
   } 
 
   return (
@@ -41,12 +54,12 @@ const SwapDemo = () => {
       <div className="con">
       <div>
       <label>
-        Enter Swap Positions (e.g., "0,3 1,2"):
+        Enter Swap Point:
         <input
           type="text"
           value={swapPositions}
           onChange={(e) => setSwapPositions(e.target.value)}
-          placeholder="Enter swap positions"
+          placeholder="Enter swap position"
         />
       </label>
 

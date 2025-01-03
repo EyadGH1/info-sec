@@ -6,8 +6,8 @@ const Ceaser = () => {
   const [cipheredText, setCipheredText] = useState("");
   const [decryptedText, setDecryptedText] = useState("");
 
-  const inputRef = useRef(null);
-
+  const plainRef = useRef(null);
+  const enRef = useRef("")
   const encryptText = (text) => {
     return text
       .split("")
@@ -30,15 +30,16 @@ const Ceaser = () => {
 
   const handleEncryptSubmit = (e) => {
     e.preventDefault();
-    const text = inputRef.current.value;
+    const text = plainRef.current.value;
     setPlainText(text);
-    const encrypted = encryptText(text);
-    setCipheredText(encrypted);
     setDecryptedText(""); // Clear decrypted text when re-encrypting
     setSubmitted(true);
   };
 
-  const handleDecryptSubmit = () => {
+  const handleDecryptSubmit = (e) => {
+    e.preventDefault()
+    const enText = enRef.current.value
+    setCipheredText(enText)
     const decrypted = decryptText(cipheredText);
     setDecryptedText(decrypted);
   };
@@ -54,14 +55,30 @@ const Ceaser = () => {
         <input
           type="text"
           className="ceaser-input"
-          ref={inputRef}
+          ref={plainRef}
           placeholder="Enter plain text"
         />
         <button className="ceaser-input-button" type="submit">
           Encrypt
         </button>
-      </form>
 
+      </form>
+      <input
+      type="text"
+      className="ceaser-input"
+      ref={enRef}
+      placeholder="put the encrypted text here"></input>
+      <button className="ceaser-input-button" onClick={handleDecryptSubmit}>
+            Decrypt
+          </button>
+          {decryptedText && (
+            <div className="decrypted-text">
+              <h3>Decrypted Text: {decryptedText}</h3>
+              <p>
+                The decrypted text matches the original text! The Caesar Cipher is easily broken if the shift is known.
+              </p>
+            </div>
+          )}
       {submitted && (
         <div className="ciphered-text">
           <h2>Step-by-step Process</h2>
@@ -72,18 +89,9 @@ const Ceaser = () => {
           </div>
 
           <h3>Encrypted Text: {cipheredText}</h3>
-          <button className="ceaser-input-button" onClick={handleDecryptSubmit}>
-            Decrypt
-          </button>
+        
 
-          {decryptedText && (
-            <div className="decrypted-text">
-              <h3>Decrypted Text: {decryptedText}</h3>
-              <p>
-                The decrypted text matches the original text! The Caesar Cipher is easily broken if the shift is known.
-              </p>
-            </div>
-          )}
+          
 
           <div className="code-snippet">
             <h3>How It Works (Code Breakdown)</h3>
