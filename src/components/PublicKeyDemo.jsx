@@ -14,19 +14,17 @@ const modExp = (base, exp, mod) => {
   return result;
 };
 
-// Function to generate keys based on user input for p and q
+// Generate Keys
 const generateKeys = (p, q) => {
   const n = p * q;
   const phi = (p - 1) * (q - 1);
 
-  // Choose e such that it is coprime with phi
   let e = 2;
   while (e < phi) {
     if (gcd(e, phi) === 1) break;
     e++;
   }
 
-  // Compute d such that (d * e) % phi === 1
   let d = 1;
   while ((d * e) % phi !== 1) {
     d++;
@@ -35,21 +33,22 @@ const generateKeys = (p, q) => {
   return { publicKey: { e, n }, privateKey: { d, n } };
 };
 
-// Function to compute gcd (Greatest Common Divisor)
+// GCD function
 const gcd = (a, b) => {
   if (b === 0) return a;
   return gcd(b, a % b);
 };
 
 const PublicKeyDemo = () => {
-  const [message, setMessage] = useState(""); // Holds the original message
-  const [encryptedMessage, setEncryptedMessage] = useState(""); // Holds the encrypted message
-  const [decryptedMessage, setDecryptedMessage] = useState(""); // Holds the decrypted message
-  const [p, setP] = useState(17); // User input for prime p
-  const [q, setQ] = useState(11); // User input for prime q
-  const [keys, setKeys] = useState(generateKeys(p, q)); // Initial keys based on default primes
+  const [message, setMessage] = useState(""); // For user input message
+  const [encryptedMessage, setEncryptedMessage] = useState(""); // For encrypted message
+  const [decryptedMessage, setDecryptedMessage] = useState(""); // For decrypted message
+  const [enmessage, setEnmessage] = useState(""); // For encrypted message input for decryption
+  const [p, setP] = useState(17); // Default prime p
+  const [q, setQ] = useState(11); // Default prime q
+  const [keys, setKeys] = useState(generateKeys(p, q)); // Default keys generated with p and q
 
-  // Encrypt the message using the public key
+  // Encrypt the message
   const handleEncrypt = () => {
     const { e, n } = keys.publicKey;
     const messageChars = message.split("").map((char) => char.charCodeAt(0));
@@ -57,27 +56,28 @@ const PublicKeyDemo = () => {
     setEncryptedMessage(encryptedChars.map((char) => String.fromCharCode(char)).join(""));
   };
 
-  // Decrypt the message using the private key
+  // Decrypt the message
   const handleDecrypt = () => {
     const { d, n } = keys.privateKey;
-    const encryptedChars = encryptedMessage.split("").map((char) => char.charCodeAt(0)); // Convert encrypted message back to numbers
+    const encryptedChars = enmessage.split("").map((char) => char.charCodeAt(0)); // Convert the encrypted input to ASCII values
     const decryptedChars = encryptedChars.map((char) => modExp(char, d, n)); // Decrypt each character
     setDecryptedMessage(decryptedChars.map((char) => String.fromCharCode(char)).join("")); // Convert back to characters
   };
 
-  // Handle the generation of new keys based on new primes
+  // Generate new keys based on p and q
   const handleGenerateKeys = () => {
     const newKeys = generateKeys(p, q);
     setKeys(newKeys);
-    setEncryptedMessage(""); // Reset encrypted message when keys are changed
-    setDecryptedMessage(""); // Reset decrypted message when keys are changed
+    setEncryptedMessage(""); // Reset encrypted message after generating new keys
+    setDecryptedMessage(""); // Reset decrypted message
   };
 
   return (
     <div className="public-key-demo-container">
       <h2 className="header-title">Public Key Encryption Demo</h2>
       <p className="intro-text">
-        Public Key Encryption is a form of asymmetric cryptography where each user has a pair of keys: a public key and a private key. The public key is used to encrypt messages, while the private key is used to decrypt them.
+        Public Key Encryption is a form of asymmetric cryptography where each user has a pair of keys: a public key and a private key.
+        The public key is used to encrypt messages, while the private key is used to decrypt them.
       </p>
 
       <div className="key-section">
@@ -100,7 +100,6 @@ const PublicKeyDemo = () => {
         </ul>
       </div>
 
-      {/* Input fields for primes p and q */}
       <div className="prime-inputs">
         <label>
           Prime p:
@@ -142,7 +141,16 @@ const PublicKeyDemo = () => {
       )}
 
       <br />
-      <button className="action-button" onClick={handleDecrypt} disabled={!encryptedMessage}>
+      <textarea
+        className="message-input"
+        rows="4"
+        cols="50"
+        placeholder="Enter the encrypted message here..."
+        value={enmessage}
+        onChange={(e) => setEnmessage(e.target.value)}
+      />
+      <br />
+      <button className="action-button" onClick={handleDecrypt} disabled={!enmessage}>
         Decrypt Message
       </button>
 
